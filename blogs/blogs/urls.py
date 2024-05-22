@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 
 from boards import views
 from accounts import views as accounts_views
@@ -35,7 +35,8 @@ urlpatterns = [
         auth_views.LogoutView.as_view(http_method_names=["get", "post", "options"]),
         name="logout",
     ),
-    re_path(r"^boards/(?P<pk>\d+)/$", views.board_topics, name="board_topics"),
+    # re_path(r"^boards/(?P<pk>\d+)/$", views.board_topics, name="board_topics"),
+    re_path(r'^boards/(?P<pk>\d+)/$', views.TopicListView.as_view(), name='board_topics'),
     re_path(r"^boards/(?P<pk>\d+)/new/$", views.new_topic, name="new_topic"),
     re_path(r'^$', views.BoardListView.as_view(), name='home'),
     re_path(
@@ -70,7 +71,8 @@ urlpatterns = [
     re_path(r'^settings/password/done/$', auth_views.PasswordChangeDoneView.as_view(template_name='password_change_done.html'),
     name='password_change_done'),
 
-    re_path(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$', views.topic_posts, name='topic_posts'),
+    # re_path(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$', views.topic_posts, name='topic_posts'),
+    re_path(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/$', views.PostListView.as_view(), name='topic_posts'),
 
     re_path(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/reply/$', views.reply_topic, name='reply_topic'),
 
@@ -78,4 +80,8 @@ urlpatterns = [
 
     re_path(r'^boards/(?P<pk>\d+)/topics/(?P<topic_pk>\d+)/posts/(?P<post_pk>\d+)/edit/$',
         views.PostUpdateView.as_view(), name='edit_post'),
+
+    re_path(r'^settings/account/$', accounts_views.UserUpdateView.as_view(), name='my_account'),
+
+    path('api/', include('sample_api.urls')),
 ]
